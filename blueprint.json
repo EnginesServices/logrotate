@@ -12,11 +12,110 @@
       "version": {
         "major": 0,
         "minor": 0,
-        "level": "alpha",
+        "level": "beta",
         "patch": 0
       }
-    }
+    },
+    "software": {
+      "display": {
+        "title": "logrotate",
+        "label": "logrotate"
+      }
+    },
+    "timestamp": "2017-11-19T12:39:52+11:00"
   },
   "software": {
+    "base": {
+      "name": "logrotate",
+      "accepts": [
+        "ManagedEngine",
+        "ManagedService"
+      ],
+      "publisher_namespace": "EnginesSystem",
+      "type_path": "logrotate",
+      "service_handle_field": "log_file_path",
+      "parent_image": "engines/servicebase",
+      "run_as_user": "logrotate",
+      "deployment_type": "worker",
+      "memory": {
+        "required": 32,
+        "recommended": 48
+      },
+      "soft_service": true
+    },
+    "scripts": {
+      "start": {
+        "language": "sh",
+        "content": "#!/bin/sh\r\nPID_FILE=/tmp/logrotate.pid\r\nexport PID_FILE\r\n. /home/engines/functions/trap.sh\r\n\r\nstartup_complete\r\n\r\nsleep 120\r\necho \"Log Rotated Started\"\r\ndate\r\n\r\n\r\n\r\n\r\nsudo /usr/sbin/logrotate -f /home/logrotate.conf &\r\npid=$!\r\necho $pid >$PID_FILE\r\n\r\nwait  \r\nexit_code=$?\r\necho \"Log Rotated Completed\"\r\ndate\r\n\r\nshutdown_complete\r\n\r\n\r\n"
+      },
+      "install": {
+        "language": "sh",
+        "content": " #!/bin/sh\r\n \r\n mkdir -p /home/engines/scripts/configurators/saved /home/logrotate.d /home/saved/ &&\\\r\n\tchown logrotate /home/engines/scripts/configurators/saved /home/logrotate.d /home/saved/\r\n"
+      }
+    },
+    "consumer_params": [
+      {
+        "name": "log_name",
+        "mandatory": true,
+        "immutable": true,
+        "input": {
+          "type": "string",
+          "label": "Log Name"
+        }
+      },
+      {
+        "name": "log_file_path",
+        "mandatory": true,
+        "input": {
+          "type": "string",
+          "title": "Log file path"
+        }
+      },
+      {
+        "name": "cycle",
+        "mandatory": true,
+        "input": {
+          "type": "select",
+          "label": "Cycle",
+          "collection": {
+            "items": {
+              "daily": "Daily",
+              "weekly": "Weekly",
+              "monthly": "Monthly"
+            }
+          }
+        }
+      },
+      {
+        "name": "rotate",
+        "value": "12",
+        "mandatory": true,
+        "input": {
+          "type": "integer",
+          "label": "Rotations to keep"
+        }
+      },
+      {
+        "name": "compress",
+        "value": "true",
+        "input": {
+          "type": "boolean",
+          "label": "Compress"
+        }
+      }
+    ],
+    "schedules": [
+      {
+        "label": "rotate_schedule",
+        "timespec": {
+          "minute": "5",
+          "hour": "*/6",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "*"
+        },
+        "instruction": "start"
+      }
+    ]
   }
 }
