@@ -15,7 +15,7 @@ rotate 30
 daily
 compress
 dateext
-
+ 
 }
 
 /var/log/syslog/mail.log{
