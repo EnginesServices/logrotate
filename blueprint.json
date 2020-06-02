@@ -22,7 +22,7 @@
         "label": "logrotate"
       }
     },
-    "timestamp": "2020-06-02T10:29:09+10:00"
+    "timestamp": "2020-06-02T10:38:50+10:00"
   },
   "software": {
     "base": {
@@ -54,6 +54,14 @@
         "content": " #!/bin/sh\r\n \r\n mkdir -p /home/engines/scripts/configurators/saved /home/logrotate/saved/ /home/logrotate/conf.d \r\n chown -R logrotate /home/engines/scripts/configurators/saved /home/logrotate\r\n"
       }
     },
+    "included_files": [
+      {
+        "source": "injections/",
+        "destination": "/",
+        "owner": "root",
+        "group": "containers"
+      }
+    ],
     "consumers": {
       "accepts": [
         "ManagedEngine",
