@@ -22,7 +22,7 @@
         "label": "logrotate"
       }
     },
-    "timestamp": "2020-06-02T11:14:30+10:00"
+    "timestamp": "2020-06-02T11:42:34+10:00"
   },
   "software": {
     "base": {
@@ -53,7 +53,7 @@
       },
       "install": {
         "language": "sh",
-        "content": " #!/bin/sh\r\n \r\n mkdir -p /home/engines/scripts/configurators/saved /home/logrotate/saved/ /home/logrotate/conf.d \r\n chown -R logrotate /home/engines/scripts/configurators/saved /home/logrotate\r\n"
+        "content": " #!/bin/sh\r\n \r\n mkdir -p /home/engines/scripts/configurators/saved /home/logrotate/saved/ /home/logrotate/conf.d \r\n chown -R logrotate /home/engines/scripts/configurators/saved /home/logrotate\r\n chown root /home/logrotate/logrotate.conf\r\n chmod 640  /home/logrotate/logrotate.conf\r\n"
       }
     },
     "included_files": [
