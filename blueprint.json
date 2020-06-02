@@ -22,7 +22,7 @@
         "label": "logrotate"
       }
     },
-    "timestamp": "2020-06-02T13:07:57+10:00"
+    "timestamp": "2020-06-02T13:19:57+10:00"
   },
   "software": {
     "base": {
@@ -62,6 +62,18 @@
         "destination": "/",
         "owner": "root",
         "group": "containers"
+      }
+    ],
+    "service_configurations": [
+      {
+        "publisher_namespace": "EnginesSystem",
+        "type_path": "schedule",
+        "variables": {
+          "action_type": "start",
+          "cron_job": "every_6_hrs",
+          "title": "start",
+          "when": "5 */6 * *"
+        }
       }
     ],
     "consumers": {
