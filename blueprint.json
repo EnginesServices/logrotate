@@ -1,6 +1,6 @@
 {
-  "title": "volmgr",
-  "description": "Volume Manager",
+  "title": "logrotate",
+  "description": "Log Rotate",
   "memory_usage": {
     "required": 32,
     "recommended": 48
