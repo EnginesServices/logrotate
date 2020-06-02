@@ -22,7 +22,7 @@
         "label": "logrotate"
       }
     },
-    "timestamp": "2020-06-02T11:06:22+10:00"
+    "timestamp": "2020-06-02T11:14:30+10:00"
   },
   "software": {
     "base": {
@@ -39,7 +39,7 @@
         "recommended": 48
       },
       "run_as_user": "logrotate",
-      "user_id": "22016",
+      "user_id": "22028",
       "user_primary_group": "logrotate",
       "create_user": "1"
     },
