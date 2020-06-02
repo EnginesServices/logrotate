@@ -22,7 +22,7 @@
         "label": "logrotate"
       }
     },
-    "timestamp": "2020-06-02T12:13:46+10:00"
+    "timestamp": "2020-06-02T13:07:57+10:00"
   },
   "software": {
     "base": {
@@ -73,14 +73,14 @@
     "consumer_scripts": {
       "add": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\n\r\n . /home/engines/functions/checks.sh\r\nrequired_values=\"log_file_path parent_engine cycle rotate\"\r\ncheck_required_values\r\n\r\n\r\nif ! test -d  /home/logrotate/saved/$parent_engine/\r\n then\r\n    mkdir -p /home/logrotate/saved/$parent_engine/\r\nfi\r\n\r\nif test -z $service_handle\r\n then\r\n   service_handle=`basename $log_file_path`\r\nfi\r\n\r\necho \"/var/log/engines/$log_file_path{\" > /home/logrotate/saved/$parent_engine/$service_handle.entry\r\ncat /home/logrotate/tmpls/log_rotation_entry | sed \"/ROTATE/s//$rotate/\" |\\\r\n                sed    \"/CYCLE/s//$cycle/\"  >> /home/logrotate/saved/$parent_engine/$service_handle.entry\r\n\r\n\r\ncat /home/logrotate/saved/$parent_engine/*entry > /home/logrotate/conf.d/$parent_engine\r\n\r\nsudo -n /home/engines/scripts/servics/sudo/add_service.sh $parent_engine"
+        "content": "#!/bin/sh\r\n\r\n\r\n . /home/engines/functions/checks.sh\r\nrequired_values=\"log_file_path parent_engine cycle rotate\"\r\ncheck_required_values\r\n\r\n\r\nif ! test -d  /home/logrotate/saved/$parent_engine/\r\n then\r\n    mkdir -p /home/logrotate/saved/$parent_engine/\r\nfi\r\n\r\nif test -z $service_handle\r\n then\r\n   service_handle=`basename $log_file_path`\r\nfi\r\n\r\necho \"/var/log/engines/$log_file_path{\" > /home/logrotate/saved/$parent_engine/$service_handle.entry\r\ncat /home/logrotate/tmpls/log_rotation_entry | sed \"/ROTATE/s//$rotate/\" |\\\r\n                sed    \"/CYCLE/s//$cycle/\"  >> /home/logrotate/saved/$parent_engine/$service_handle.entry\r\n\r\n\r\ncat /home/logrotate/saved/$parent_engine/*entry > /home/logrotate/conf.d/$parent_engine\r\n\r\nsudo -n /home/engines/scripts/services/sudo/add_service.sh $parent_engine"
       },
       "add_sudo": {
-        "content": "#!/bin/sh\r\nchmod 640 /home/logrotate/conf.d/$1"
+        "content": "#!/bin/sh\r\nchown root /home/logrotate/conf.d/$1\r\nchmod 640 /home/logrotate/conf.d/$1"
       },
       "remove": {
         "language": "sh",
-        "content": "#!/bin/sh\r\n\r\n . /home/engines/functions/checks.sh\r\n \r\nrequired_values=\"log_file_path parent_engine\"\r\ncheck_required_values\r\n\r\nrm /home/logrotate/saved/$parent_engine/$service_handle.entry\r\n\r\nsudo -n /home/engines/scripts/servics/sudo/remove_service.sh $parent_engine"
+        "content": "#!/bin/sh\r\n\r\n . /home/engines/functions/checks.sh\r\n \r\nrequired_values=\"log_file_path parent_engine\"\r\ncheck_required_values\r\n\r\nrm /home/logrotate/saved/$parent_engine/$service_handle.entry\r\n\r\nsudo -n /home/engines/scripts/services/sudo/remove_service.sh $parent_engine"
       },
       "remove_sudo": {
         "content": "#!/bin/sh\r\nrm /home/logrotate/conf.d/$1"
