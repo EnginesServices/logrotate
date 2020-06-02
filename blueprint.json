@@ -22,7 +22,7 @@
         "label": "logrotate"
       }
     },
-    "timestamp": "2020-06-02T10:38:50+10:00"
+    "timestamp": "2020-06-02T11:14:30+10:00"
   },
   "software": {
     "base": {
@@ -39,6 +39,8 @@
         "recommended": 48
       },
       "run_as_user": "logrotate",
+      "user_id": "22028",
+      "user_primary_group": "logrotate",
       "create_user": "1"
     },
     "disposition": {
@@ -47,7 +49,7 @@
     "scripts": {
       "start": {
         "language": "sh",
-        "content": "#!/bin/sh\r\nPID_FILE=/tmp/logrotate.pid\r\nexport PID_FILE\r\n. /home/engines/functions/trap.sh\r\n\r\nstartup_complete\r\n\r\nsleep 120\r\necho \"Log Rotated Started\"\r\ndate\r\n\r\n\r\n\r\n\r\nsudo -n /usr/sbin/logrotate -f /home/logrotate.conf &\r\npid=$!\r\necho $pid >$PID_FILE\r\n\r\nwait  \r\nexit_code=$?\r\necho \"Log Rotated Completed\"\r\ndate\r\n\r\nshutdown_complete\r\n\r\n\r\n"
+        "content": "#!/bin/sh\r\nPID_FILE=/tmp/logrotate.pid\r\nexport PID_FILE\r\n. /home/engines/functions/trap.sh\r\n\r\nstartup_complete\r\n\r\nsleep 120\r\necho \"Log Rotated Started\"\r\ndate\r\n\r\n\r\n\r\n\r\nsudo -n /usr/sbin/logrotate -f /home/logrotate/logrotate.conf &\r\npid=$!\r\necho $pid >$PID_FILE\r\n\r\nwait  \r\nexit_code=$?\r\necho \"Log Rotated Completed\"\r\ndate\r\n\r\nshutdown_complete\r\n\r\n\r\n"
       },
       "install": {
         "language": "sh",
