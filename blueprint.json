@@ -7,16 +7,14 @@
   },
   "licenses": [
   ],
-  "binding_anchor": [
-    {
-      "variables": {
-        "action_type": "start",
-        "cron_job": "every_6_hrs",
-        "title": "start",
-        "when": "5 */6 * *"
-      }
+  "binding_anchor": {
+    "variables": {
+      "action_type": "start",
+      "cron_job": "every_6_hrs",
+      "title": "start",
+      "when": "5 */6 * *"
     }
-  ],
+  },
   "stages": [
     {
       "starter": {
