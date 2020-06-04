@@ -1,166 +1,52 @@
 {
-  "schema": {
-    "type": "service_blueprint",
-    "version": {
-      "major": 0,
-      "minor": 1
-    },
-    "origin": "Engines Developer Studio 0.2"
+  "title": "logrotate",
+  "description": "Log Rotate",
+  "memory_usage": {
+    "required": 32,
+    "recommended": 48
   },
-  "metadata": {
-    "blueprint": {
-      "version": {
-        "major": 0,
-        "minor": 0,
-        "level": "beta",
-        "patch": 0
-      }
-    },
-    "software": {
-      "display": {
-        "title": "logrotate",
-        "label": "logrotate"
-      }
-    },
-    "timestamp": "2020-06-02T13:19:57+10:00"
+  "licenses": [
+  ],
+  "binding_anchor": {
+    "variables": {
+      "action_type": "start",
+      "cron_job": "every_6_hrs",
+      "title": "start",
+      "when": "5 */6 * *"
+    }
   },
-  "software": {
-    "base": {
-      "name": "logrotate",
-      "publisher_namespace": "EnginesSystem",
-      "type_path": "logrotate",
-      "service_handle_field": "log_file_path",
-      "parent_image": "engines/servicebase",
-      "deployment_type": "worker",
-      "default_stop_timeout": 0,
-      "restart_attempts": 0,
-      "memory": {
-        "required": 32,
-        "recommended": 48
+  "stages": [
+    {
+      "starter": {
+        "image": "engines/servicebase",
+        "tag": "current"
       },
-      "run_as_user": "logrotate",
-      "user_id": "22028",
-      "user_primary_group": "logrotate",
-      "create_user": "1"
-    },
-    "disposition": {
-      "soft_service": true
-    },
-    "scripts": {
-      "start": {
-        "language": "sh",
-        "content": "#!/bin/sh\r\nPID_FILE=/tmp/logrotate.pid\r\nexport PID_FILE\r\n. /home/engines/functions/trap.sh\r\n\r\nstartup_complete\r\n\r\nsleep 120\r\necho \"Log Rotated Started\"\r\ndate\r\n\r\n\r\n\r\n\r\nsudo -n /usr/sbin/logrotate -f /home/logrotate/logrotate.conf &\r\npid=$!\r\necho $pid >$PID_FILE\r\n\r\nwait  \r\nexit_code=$?\r\necho \"Log Rotated Completed\"\r\ndate\r\n\r\nshutdown_complete\r\n\r\n\r\n"
+      "state": {
+        "type_path": "logrotate",
+        "service_handle_field": "log_file_path",
+        "deployment_type": "worker",
+        "default_stop_timeout": 0,
+        "restart_attempts": 0,
+        "run_as_user": "logrotate",
+        "user_primary_group": "logrotate",
+        "create_user": "1"
       },
-      "install": {
-        "language": "sh",
-        "content": " #!/bin/sh\r\n \r\n mkdir -p /home/engines/scripts/configurators/saved /home/logrotate/saved/ /home/logrotate/conf.d \r\n chown -R logrotate /home/engines/scripts/configurators/saved /home/logrotate\r\n chown root /home/logrotate/logrotate.conf\r\n chmod 640  /home/logrotate/logrotate.conf\r\n chmod 640  /home/logrotate/logrotate.conf /home/logrotate/conf.d/syslog_logs"
-      }
-    },
-    "included_files": [
-      {
-        "source": "injections/",
-        "destination": "/",
-        "owner": "root",
-        "group": "containers"
-      }
-    ],
-    "service_configurations": [
-      {
-        "publisher_namespace": "EnginesSystem",
-        "type_path": "schedule",
-        "variables": {
-          "action_type": "start",
-          "cron_job": "every_6_hrs",
-          "title": "start",
-          "when": "5 */6 * *"
+      "disposition": [
+        "soft_service"
+      ],
+      "schedules": [
+        {
+          "label": "rotate_schedule",
+          "timespec": {
+            "minute": 5,
+            "hour": 0,
+            "day_of_month": 0,
+            "month": 0,
+            "day_of_week": 0
+          },
+          "instruction": "start"
         }
-      }
-    ],
-    "consumers": {
-      "accepts": [
-        "ManagedEngine",
-        "ManagedService"
       ]
-    },
-    "consumer_scripts": {
-      "add": {
-        "language": "sh",
-        "content": "#!/bin/sh\r\n\r\n\r\n . /home/engines/functions/checks.sh\r\nrequired_values=\"log_file_path parent_engine cycle rotate\"\r\ncheck_required_values\r\n\r\n\r\nif ! test -d  /home/logrotate/saved/$parent_engine/\r\n then\r\n    mkdir -p /home/logrotate/saved/$parent_engine/\r\nfi\r\n\r\nif test -z $service_handle\r\n then\r\n   service_handle=`basename $log_file_path`\r\nfi\r\n\r\necho \"/var/log/engines/$log_file_path{\" > /home/logrotate/saved/$parent_engine/$service_handle.entry\r\ncat /home/logrotate/tmpls/log_rotation_entry | sed \"/ROTATE/s//$rotate/\" |\\\r\n                sed    \"/CYCLE/s//$cycle/\"  >> /home/logrotate/saved/$parent_engine/$service_handle.entry\r\n\r\n\r\ncat /home/logrotate/saved/$parent_engine/*entry > /home/logrotate/conf.d/$parent_engine\r\n\r\nsudo -n /home/engines/scripts/services/sudo/add_service.sh $parent_engine"
-      },
-      "add_sudo": {
-        "content": "#!/bin/sh\r\nchown root /home/logrotate/conf.d/$1\r\nchmod 640 /home/logrotate/conf.d/$1"
-      },
-      "remove": {
-        "language": "sh",
-        "content": "#!/bin/sh\r\n\r\n . /home/engines/functions/checks.sh\r\n \r\nrequired_values=\"log_file_path parent_engine\"\r\ncheck_required_values\r\n\r\nrm /home/logrotate/saved/$parent_engine/$service_handle.entry\r\n\r\nsudo -n /home/engines/scripts/services/sudo/remove_service.sh $parent_engine"
-      },
-      "remove_sudo": {
-        "content": "#!/bin/sh\r\nrm /home/logrotate/conf.d/$1"
-      }
-    },
-    "consumer_params": [
-      {
-        "name": "log_name",
-        "mandatory": true,
-        "immutable": true,
-        "input": {
-          "type": "string",
-          "label": "Log Name"
-        }
-      },
-      {
-        "name": "log_file_path",
-        "mandatory": true,
-        "input": {
-          "type": "string",
-          "title": "Log file path"
-        }
-      },
-      {
-        "name": "cycle",
-        "mandatory": true,
-        "input": {
-          "type": "select",
-          "label": "Cycle",
-          "collection": {
-            "items": {
-              "daily": "Daily",
-              "weekly": "Weekly",
-              "monthly": "Monthly"
-            }
-          }
-        }
-      },
-      {
-        "name": "rotate",
-        "value": "12",
-        "mandatory": true,
-        "input": {
-          "type": "integer",
-          "label": "Rotations to keep"
-        }
-      },
-      {
-        "name": "compress",
-        "value": "true",
-        "input": {
-          "type": "boolean",
-          "label": "Compress"
-        }
-      }
-    ],
-    "schedules": [
-      {
-        "label": "rotate_schedule",
-        "timespec": {
-          "minute": 5,
-          "hour": 0,
-          "day_of_month": 0,
-          "month": 0,
-          "day_of_week": 0
-        },
-        "instruction": "start"
-      }
-    ]
-  }
+    }
+  ]
 }
