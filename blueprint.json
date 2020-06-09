@@ -1,10 +1,7 @@
 {
   "title": "logrotate",
   "description": "Log Rotate",
-  "memory_usage": {
-    "required": 32,
-    "recommended": 48
-  },
+  "memory_usage": 48,
   "licenses": [
   ],
   "binding_anchor": {
@@ -15,38 +12,18 @@
       "when": "5 */6 * *"
     }
   },
+  "user": {
+    "identifier": "22028",
+    "name": "logrotate",
+    "group": "logrotate",
+    "create": true
+  },
   "stages": [
     {
       "starter": {
         "image": "engines/servicebase",
         "tag": "current"
-      },
-      "state": {
-        "type_path": "logrotate",
-        "service_handle_field": "log_file_path",
-        "deployment_type": "worker",
-        "default_stop_timeout": 0,
-        "restart_attempts": 0,
-        "run_as_user": "logrotate",
-        "user_primary_group": "logrotate",
-        "create_user": "1"
-      },
-      "disposition": [
-        "soft_service"
-      ],
-      "schedules": [
-        {
-          "label": "rotate_schedule",
-          "timespec": {
-            "minute": 5,
-            "hour": 0,
-            "day_of_month": 0,
-            "month": 0,
-            "day_of_week": 0
-          },
-          "instruction": "start"
-        }
-      ]
+      }
     }
   ]
 }
