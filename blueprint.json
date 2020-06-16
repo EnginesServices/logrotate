@@ -15,7 +15,6 @@
   "user": {
     "identifier": "22028",
     "name": "logrotate",
-    "group": "logrotate",
     "create": true
   },
   "stages": [
